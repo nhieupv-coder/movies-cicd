@@ -41,7 +41,7 @@ jobs:
 
   stage_deploy:
     runs-on: ubuntu-latest
-    needs: install-build-test
+    needs: job-test
     environment:
       name: staging
 
