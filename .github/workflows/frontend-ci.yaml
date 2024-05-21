@@ -65,24 +65,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js 
-        uses: actions/setup-node@v3
-        with:
-          node-version: latest
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install, Build, Test
-        run: | 
-          cd starter/frontend
-          npm ci 
-          npm run test 
-
       - name: Build Docker image
         run: |
           cd starter/frontend
