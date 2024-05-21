@@ -1,0 +1,69 @@
+name: Frontend Continuous Deloyment
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+     - main
+    types:
+     - closed
+  
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  NODE_VERSION: latest
+
+jobs:
+  job-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Use Node.js 
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{env.NODE_VERSION}}
+        cache: 'npm'
+
+    - name: Run lint frontend
+      run: | 
+        cd starter/frontend
+        npm ci 
+        npm run lint 
+    - name: Run test frontend
+      run: | 
+        cd starter/frontend
+        npm ci 
+        npm run test
+
+  stage_deploy:
+    runs-on: ubuntu-latest
+    needs: install-build-test
+    environment:
+      name: staging
+
+    steps:
+      # Simulate a Deploymentx``
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{env.AWS_SESSION_TOKEN}}
+          aws-region: ${{env.AWS_REGION}}
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: moive-picture-frontend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest -f .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:latest
+   
+      # - name: Deploy to Staging
+      #   run: |
+      #    echo "Deployed to staging environment"
