@@ -5,14 +5,14 @@ import './App.css';
 
 export default function App() {
   const [selectedMovie, setSelectedMovie] = useState(null);
-
+  console.log("test PR")
   const handleMovieClick = (movie) => {
     setSelectedMovie(movie);
   };
 
   return (
     <div className="container">
-      <h1>Movie List Test CD Merge PR</h1>
+      <h1>Movie List</h1>
 
       <MovieList onMovieClick={handleMovieClick} />
 
