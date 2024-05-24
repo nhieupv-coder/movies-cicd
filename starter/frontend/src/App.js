@@ -5,7 +5,7 @@ import './App.css';
 
 export default function App() {
   const [selectedMovie, setSelectedMovie] = useState(null);
-
+  console.log('test PR');
   const handleMovieClick = (movie) => {
     setSelectedMovie(movie);
   };
