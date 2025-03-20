@@ -13,6 +13,7 @@ function MovieDetail({ movie }) {
     <div>
       <h2>{details?.movie.title}</h2>
       <p>{details?.movie.description}</p>
+      <p>Hello I'm Nhieu</p>
     </div>
   );
 }
